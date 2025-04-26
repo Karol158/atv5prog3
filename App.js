@@ -43,7 +43,7 @@ function LoginScreen({ navigation }) {
   );
 }
 
-function CadastroUsuario() {
+function CadastroUsuario({ navigation }) {
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
   const [email, setEmail] = useState('');
@@ -51,26 +51,27 @@ function CadastroUsuario() {
 
   const Salvar = () => {
     axios.post('http://localhost:3000/usuarios', {
-      nome: nome,
-      cpf: cpf,
-      email: email,
-      senha: senha
+      nome,
+      cpf,
+      email,
+      senha
     })
     .then(response => {
       console.log(response);
-      navigation.navigate('LoginScreen');
+      navigation.navigate('Login');
     })
     .catch(error => {
       console.log(error);
     });
   };
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <Text style={styles.label}>Nome</Text>
-      <TextInput value={nome} onChangeText={setNome} />
+      <TextInput value={nome} onChangeText={setNome} style={styles.input} />
       <Text style={styles.label}>Cpf</Text>
-      <TextInput value={cpf} onChangeText={setCpf} />
+      <TextInput value={cpf} onChangeText={setCpf} style={styles.input} />
       <Text style={styles.label}>Email</Text>
       <Input value={email} onChangeText={setEmail} />
       <Text style={styles.label}>Senha</Text>
@@ -112,29 +113,25 @@ function ListacontatosScreen({ navigation }) {
 }
 
 function inserirDadosContato(nome, email, telefone) {
-  axios.post('http://localhost:3000/contatos', {
-    nome,
-    email,
-    telefone,
-  })
+  axios.post('http://localhost:3000/contatos', { nome, email, telefone })
     .then(response => console.log(response))
     .catch(error => console.log(error));
 }
 
-function Cadastrocontato() {
-  const [nome, setNome] = useState();
-  const [email, setEmail] = useState();
-  const [telefone, setTelefone] = useState();
+function Cadastrocontato({ navigation }) {
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
 
   const Salvar = () => {
     axios.post('http://localhost:3000/contatos', {
-      nome: nome,
-      email: email,
-      telefone:telefone
+      nome,
+      email,
+      telefone
     })
     .then(response => {
       console.log(response);
-      navigation.navigate('ListacontatosScreen');
+      navigation.navigate('Listacontatos');
     })
     .catch(error => {
       console.log(error);
@@ -144,33 +141,29 @@ function Cadastrocontato() {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Nome</Text>
-      <TextInput value={nome} onChangeText={setNome} />
+      <TextInput value={nome} onChangeText={setNome} style={styles.input} />
       <Text style={styles.label}>Email</Text>
-      <TextInput value={email} onChangeText={setEmail} />
+      <TextInput value={email} onChangeText={setEmail} style={styles.input} />
       <Text style={styles.label}>Telefone</Text>
-      <TextInput value={telefone} onChangeText={setTelefone} />
+      <TextInput value={telefone} onChangeText={setTelefone} style={styles.input} />
       <Button title="Salvar" onPress={Salvar} buttonStyle={{ backgroundColor: '#007AFF', borderRadius: 10, marginVertical: 5 }} />
     </View>
   );
 }
 
 function excluirDados(id) {
-  axios.delete(http://localhost:3000/contatos/${id})
+  axios.delete(`http://localhost:3000/contatos/${id}`)
     .then(response => console.log(response))
     .catch(error => console.log(error));
 }
 
 function alterarDados(id, nome, email, telefone) {
-  axios.put(http://localhost:3000/contatos/${id}, {
-    nome,
-    email,
-    telefone,
-  })
+  axios.put(`http://localhost:3000/contatos/${id}`, { nome, email, telefone })
     .then(response => console.log(response))
     .catch(error => console.log(error));
 }
 
-function Contatos({ route }) {
+function Contatos({ route, navigation }) {
   const { contato } = route.params;
   const [nome, setNome] = useState(contato.nome);
   const [email, setEmail] = useState(contato.email);
@@ -179,13 +172,21 @@ function Contatos({ route }) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Nome</Text>
-      <TextInput value={nome} onChangeText={setNome} />
+      <TextInput value={nome} onChangeText={setNome} style={styles.input} />
       <Text style={styles.label}>Email</Text>
-      <TextInput value={email} onChangeText={setEmail} />
+      <TextInput value={email} onChangeText={setEmail} style={styles.input} />
       <Text style={styles.label}>Telefone</Text>
-      <TextInput value={telefone} onChangeText={setTelefone} />
-      <Button title="Alterar" onPress={() => alterarDados(contato.id, nome, email, telefone)} buttonStyle={{ backgroundColor: '#007AFF', borderRadius: 10, marginVertical: 5 }} />
-      <Button title="Excluir" onPress={() => excluirDados(contato.id)} buttonStyle={{ backgroundColor: '#FF3B30', borderRadius: 10, marginVertical: 5 }} />
+      <TextInput value={telefone} onChangeText={setTelefone} style={styles.input} />
+      <Button
+        title="Alterar"
+        onPress={() => alterarDados(contato.id, nome, email, telefone)}
+        buttonStyle={{ backgroundColor: '#007AFF', borderRadius: 10, marginVertical: 5 }}
+      />
+      <Button
+        title="Excluir"
+        onPress={() => excluirDados(contato.id)}
+        buttonStyle={{ backgroundColor: '#FF3B30', borderRadius: 10, marginVertical: 5 }}
+      />
     </View>
   );
 }
@@ -204,6 +205,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginVertical: 5,
   },
+  input: {
+    width: '100%',
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#CCC',
+    borderRadius: 8,
+    marginBottom: 10,
+  }
 });
 
 const Stack = createNativeStackNavigator();
@@ -211,15 +220,15 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Listacontatos" component={ListacontatosScreen} />
-        <Stack.Screen name="Cadastrousuario" component={CadastroUsuarioScreen} />
-        <Stack.Screen name="Cadastrocontato" component={CadastrocontatoScreen} />
-        <Stack.Screen name="Contato" component={ContatoScreen} />
+        <Stack.Screen name="Cadastrousuario" component={CadastroUsuario} />
+        <Stack.Screen name="Cadastrocontato" component={Cadastrocontato} />
+        <Stack.Screen name="Contatos" component={Contatos} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-export default App;
+export default App;
